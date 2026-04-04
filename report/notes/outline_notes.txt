@@ -10,11 +10,16 @@ Section 2:
 	•	https://arxiv.org/pdf/2305.18290
 	•	https://arxiv.org/pdf/2203.02155
 
-Extremely Relevant Papers :) https://dl.acm.org/doi/pdf/10.1145/3341105.3374063
+Extremely Relevant Papers :)
+https://dl.acm.org/doi/pdf/10.1145/3341105.3374063
 https://ojs.aaai.org/index.php/AIIDE/article/view/12505/12358
 https://dl.acm.org/doi/pdf/10.1145/3664647.3681178
 https://www.mdpi.com/2076-3417/15/3/1543
 
+- We need 2-4 topics and 2-4 related papers for each.
+- Topic 1 "AI Sports Commentary"
+- Topic 2 "DPO vs RLHF for ..."
+- Topic 3
 
 Section 3:
 	⁃	Methods:
