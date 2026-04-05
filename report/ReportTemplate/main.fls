@@ -114,9 +114,9 @@ INPUT ./2-Related_Work.tex
 INPUT ./2-Related_Work.tex
 INPUT 2-Related_Work.tex
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmti10.tfm
-INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmss10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmss8.tfm
+INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmss9.tfm
 OUTPUT main.pdf
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
