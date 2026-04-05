@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.3.23)  5 APR 2026 13:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.3.23)  5 APR 2026 13:36
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -370,28 +370,28 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 Title too long for running head. Please supply
 a shorter form with \titlerunning prior to \maketitle
-(./0-Abstract.tex) (./1-Introduction.tex) (./2-Related_Work.tex [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+(./1-Introduction.tex) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
-]) (./3-Methodology.tex [2]) (./4-Experiments.tex) (./5-Conclusions.tex) (./main.bbl [3]) [4] (./main.aux)
+] (./2-Related_Work.tex) [2] (./3-Methodology.tex) [3] (./4-Experiments.tex) [4] (./main.bbl) [5] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 3884 strings out of 469515
- 55991 string characters out of 5470807
+ 3849 strings out of 469515
+ 55433 string characters out of 5470807
  477490 words of memory out of 5000000
- 32474 multiletter control sequences out of 15000+600000
- 635605 words of font info for 70 fonts, out of 8000000 for 9000
+ 32451 multiletter control sequences out of 15000+600000
+ 632802 words of font info for 59 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 57i,9n,65p,1198b,414s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,9n,65p,1198b,289s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on main.pdf (4 pages, 137660 bytes).
+Output written on main.pdf (5 pages, 134565 bytes).
 PDF statistics:
- 62 PDF objects out of 1000 (max. 8388607)
- 37 compressed objects within 1 object stream
+ 65 PDF objects out of 1000 (max. 8388607)
+ 39 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
