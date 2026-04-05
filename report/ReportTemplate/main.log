@@ -1,18 +1,18 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.3.23)  5 APR 2026 13:36
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.22)  5 APR 2026 16:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/home/jack/Documents/school/spring26/deeplearning/DeepLearningFinalProject/report/ReportTemplate/main.tex
-(/home/jack/Documents/school/spring26/deeplearning/DeepLearningFinalProject/report/ReportTemplate/main.tex
+**/Users/navnithbharadwaj/Desktop/NN&dp/final_proj/DeepLearningFinalProject/report/ReportTemplate/main.tex
+(/Users/navnithbharadwaj/Desktop/NN&dp/final_proj/DeepLearningFinalProject/report/ReportTemplate/main.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (./llncs.cls
 Document Class: llncs 2013/09/27 v2.18 
  LaTeX document class for Lecture Notes in Computer Science
-(/usr/share/texmf-dist/tex/latex/base/article.cls
+(/usr/local/texlive/2026/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
-(/usr/share/texmf-dist/tex/latex/base/size10.clo
+(/usr/local/texlive/2026/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count275
@@ -26,7 +26,7 @@ File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
 \bibindent=\dimen148
-) (/usr/share/texmf-dist/tex/latex/tools/multicol.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/tools/multicol.sty
 Package: multicol 2025/10/21 v2.0b multicolumn formatting (FMi)
 \c@tracingmulticols=\count283
 \mult@box=\box53
@@ -96,8 +96,8 @@ Package: multicol 2025/10/21 v2.0b multicolumn formatting (FMi)
 \colbreak@box=\box98
 \mc@col@check@num=\count292
 \g__mc_curr_col_int=\count293
-) (/usr/share/texmf-dist/tex/latex/oberdiek/aliascnt.sty
-Package: aliascnt 2018/09/07 v1.5 Alias counters (HO)
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/aliascnt/aliascnt.sty
+Package: aliascnt 2026-03-08 v1.7 Alias counters (HO)
 )
 \c@chapter=\count294
 LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 362.
@@ -149,39 +149,39 @@ LaTeX Font Info:    Redeclaring math symbol \Omega on input line 372.
 \c@solution=\count312
 \c@remark=\count313
 \headlineindent=\dimen170
-) (/usr/share/texmf-dist/tex/latex/graphics/graphicx.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
- (/usr/share/texmf-dist/tex/latex/graphics/keyval.sty
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks21
-) (/usr/share/texmf-dist/tex/latex/graphics/graphics.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
- (/usr/share/texmf-dist/tex/latex/graphics/trig.sty
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
-) (/usr/share/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
- (/usr/share/texmf-dist/tex/latex/graphics-def/pdftex.def
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen171
 \Gin@req@width=\dimen172
-) (/usr/share/texmf-dist/tex/latex/amsmath/amsmath.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2025/07/09 v2.17z AMS math features
 \@mathmargin=\skip53
 
 For additional information on amsmath, use the `?' option.
-(/usr/share/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
- (/usr/share/texmf-dist/tex/latex/amsmath/amsgen.sty
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks22
 \ex@=\dimen173
-)) (/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty
+)) (/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen174
-) (/usr/share/texmf-dist/tex/latex/amsmath/amsopn.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
 \inf@bad=\count314
@@ -231,9 +231,9 @@ LaTeX Info: Redefining \Relbar on input line 970.
 \mathdisplay@stack=\toks26
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
-) (/usr/share/texmf-dist/tex/latex/amsfonts/amssymb.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
- (/usr/share/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
@@ -262,17 +262,17 @@ Package: cvpr_eso 2011/12/13 v1.00 CVPR ESO based on everyshi
 \cv@tot=\count329
 \cv@tmpc@=\count330
 \cv@tmpc=\count331
-) (/usr/share/texmf-dist/tex/latex/graphics/color.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
- (/usr/share/texmf-dist/tex/latex/graphics-cfg/color.cfg
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 149.
- (/usr/share/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (/usr/share/texmf-dist/tex/latex/geometry/geometry.sty
-Package: geometry 2020/01/02 v5.9 Page Geometry
- (/usr/share/texmf-dist/tex/generic/iftex/ifvtex.sty
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (/usr/local/texlive/2026/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2026/03/07 v6.0 Page Geometry
+ (/usr/local/texlive/2026/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
- (/usr/share/texmf-dist/tex/generic/iftex/iftex.sty
+ (/usr/local/texlive/2026/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
 \Gm@cnth=\count332
@@ -287,7 +287,7 @@ Package: iftex 2024/12/12 v1.0g TeX engine tests
 \Gm@layouthoffset=\dimen191
 \Gm@layoutvoffset=\dimen192
 \Gm@dimlist=\toks27
-) (/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count335
 ) (./main.aux)
@@ -307,7 +307,7 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
 LaTeX Font Info:    ... okay on input line 10.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
 LaTeX Font Info:    ... okay on input line 10.
- (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+ (/usr/local/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count336
 \scratchdimen=\dimen193
@@ -320,10 +320,10 @@ LaTeX Font Info:    ... okay on input line 10.
 \MPnumerator=\count340
 \makeMPintoPDFobject=\count341
 \everyMPtoPDFconversion=\toks29
-) (/usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
- (/usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 )) ABD: EveryShipout initializing macros
 *geometry* driver: auto-detecting
@@ -361,37 +361,40 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    Trying to load font information for U+msa on input line 23.
-(/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd
+(/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 23.
- (/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-Title too long for running head. Please supply
-a shorter form with \titlerunning prior to \maketitle
-(./1-Introduction.tex) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+) (./1-Introduction.tex) [1{/usr/local/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
-] (./2-Related_Work.tex) [2] (./3-Methodology.tex) [3] (./4-Experiments.tex) [4] (./main.bbl) [5] (./main.aux)
+] (./2-Related_Work.tex) [2] (./3-Methodology.tex
+<images/architecture.png, id=17, 949.29657pt x 380.92313pt>
+File: images/architecture.png Graphic file (type png)
+<use images/architecture.png>
+Package pdftex.def Info: images/architecture.png  used on input line 7.
+(pdftex.def)             Requested size: 312.40912pt x 125.35626pt.
+ [3 <./images/architecture.png>] [4]) [5] (./4-Experiments.tex) [6] (./main.bbl) [7] (./main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 3849 strings out of 469515
- 55433 string characters out of 5470807
- 477490 words of memory out of 5000000
- 32451 multiletter control sequences out of 15000+600000
+ 3860 strings out of 467525
+ 56640 string characters out of 5418982
+ 482680 words of memory out of 5000000
+ 32719 multiletter control sequences out of 15000+600000
  632802 words of font info for 59 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
- 57i,9n,65p,1198b,289s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on main.pdf (5 pages, 134565 bytes).
+ 1141 hyphenation exceptions out of 8191
+ 57i,10n,65p,1197b,289s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on main.pdf (7 pages, 192089 bytes).
 PDF statistics:
- 65 PDF objects out of 1000 (max. 8388607)
- 39 compressed objects within 1 object stream
+ 74 PDF objects out of 1000 (max. 8388607)
+ 45 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
