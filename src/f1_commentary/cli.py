@@ -255,21 +255,86 @@ def search_memory(
 # ---------------------------------------------------------------------------
 
 @app.command()
-def trace_summary() -> None:
+def trace_summary(
+    trace_file: Path = typer.Argument(..., help="Path to a JSONL trace file."),
+) -> None:
     """Print a summary of trace logs (Phase 12)."""
-    typer.echo("Not yet implemented — Phase 12")
+    from f1_commentary.traces.trace_logger import TraceLogger
+    from f1_commentary.traces.trace_utils import trace_summary as _trace_summary
+
+    if not trace_file.exists():
+        typer.echo(f"Trace file not found: {trace_file}")
+        raise typer.Exit(code=1)
+
+    logger = TraceLogger(trace_file.parent)
+    traces = logger.read_traces(trace_file)
+    summary = _trace_summary(traces)
+
+    typer.echo(f"Total traces: {summary['total_traces']}")
+    typer.echo(f"Avg latency: {summary['avg_latency_ms']} ms")
+    typer.echo("Event type distribution:")
+    for etype, count in sorted(summary["event_type_distribution"].items()):
+        typer.echo(f"  {etype}: {count}")
+    typer.echo("Driver mention frequency:")
+    for driver, count in sorted(summary["driver_mention_frequency"].items()):
+        typer.echo(f"  {driver}: {count}")
+    typer.echo("Storyline counts:")
+    for sid, count in sorted(summary["storyline_counts"].items()):
+        typer.echo(f"  {sid}: {count}")
 
 
 @app.command()
-def trace_filter() -> None:
+def trace_filter(
+    trace_file: Path = typer.Argument(..., help="Path to a JSONL trace file."),
+    driver: Optional[str] = typer.Option(None, "--driver", "-d", help="Filter by driver code."),
+    event_type: Optional[str] = typer.Option(None, "--event-type", "-e", help="Filter by candidate event type."),
+    storyline: Optional[str] = typer.Option(None, "--storyline", "-s", help="Filter by storyline ID."),
+) -> None:
     """Filter trace logs by criteria (Phase 12)."""
-    typer.echo("Not yet implemented — Phase 12")
+    from f1_commentary.traces.trace_logger import TraceLogger
+    from f1_commentary.traces.trace_utils import filter_traces
+
+    if not trace_file.exists():
+        typer.echo(f"Trace file not found: {trace_file}")
+        raise typer.Exit(code=1)
+
+    logger = TraceLogger(trace_file.parent)
+    traces = logger.read_traces(trace_file)
+    filtered = filter_traces(traces, driver=driver, event_type=event_type, storyline_id=storyline)
+
+    typer.echo(f"Matched {len(filtered)} / {len(traces)} traces")
+    for t in filtered:
+        ctype = t.candidate_event.get("candidate_type", "unknown")
+        drivers = ", ".join(t.candidate_event.get("involved_drivers", []))
+        typer.echo(f"  [{t.trace_id[:8]}] {ctype} — {drivers}")
 
 
 @app.command()
-def trace_export() -> None:
+def trace_export(
+    trace_file: Path = typer.Argument(..., help="Path to a JSONL trace file."),
+    output_path: Path = typer.Argument(..., help="Output file path."),
+    fmt: str = typer.Option("json", "--format", "-f", help="Export format: csv or json."),
+) -> None:
     """Export trace logs to an external format (Phase 12)."""
-    typer.echo("Not yet implemented — Phase 12")
+    from f1_commentary.traces.trace_logger import TraceLogger
+    from f1_commentary.traces.trace_utils import export_traces_csv, export_traces_json
+
+    if not trace_file.exists():
+        typer.echo(f"Trace file not found: {trace_file}")
+        raise typer.Exit(code=1)
+
+    logger = TraceLogger(trace_file.parent)
+    traces = logger.read_traces(trace_file)
+
+    if fmt == "csv":
+        export_traces_csv(traces, output_path)
+    elif fmt == "json":
+        export_traces_json(traces, output_path)
+    else:
+        typer.echo(f"Unknown format: {fmt}. Use 'csv' or 'json'.")
+        raise typer.Exit(code=1)
+
+    typer.echo(f"Exported {len(traces)} traces to {output_path} ({fmt})")
 
 
 # ---------------------------------------------------------------------------
@@ -277,15 +342,83 @@ def trace_export() -> None:
 # ---------------------------------------------------------------------------
 
 @app.command()
-def evaluate_run() -> None:
+def evaluate_run(
+    traces: Path = typer.Option(..., "--traces", "-t", help="Path to a JSONL trace file."),
+    references: Optional[Path] = typer.Option(  # noqa: UP007
+        None, "--references", "-r", help="Path to a text file with one reference per line."
+    ),
+    output: Optional[Path] = typer.Option(  # noqa: UP007
+        None, "--output", "-o", help="Path to write JSON results."
+    ),
+) -> None:
     """Evaluate a commentary run against reference data (Phase 14)."""
-    typer.echo("Not yet implemented — Phase 14")
+    import json as _json
+
+    from f1_commentary.evaluation.evaluator import TraceEvaluator
+
+    if not traces.exists():
+        typer.echo(f"Trace file not found: {traces}")
+        raise typer.Exit(code=1)
+
+    evaluator = TraceEvaluator(traces)
+
+    refs = None
+    if references and references.exists():
+        refs = [line.strip() for line in open(references) if line.strip()]
+
+    results = evaluator.evaluate(references=refs)
+
+    typer.echo(_json.dumps(results, indent=2))
+
+    if output:
+        evaluator.export_results(results, output)
+        typer.echo(f"\nResults saved to {output}")
 
 
 @app.command()
-def compare_system_vs_baseline() -> None:
+def compare_system_vs_baseline(
+    system_traces: Path = typer.Option(
+        ..., "--system-traces", help="Path to system JSONL trace file."
+    ),
+    baseline_traces: Path = typer.Option(
+        ..., "--baseline-traces", help="Path to baseline JSONL trace file."
+    ),
+    references: Optional[Path] = typer.Option(  # noqa: UP007
+        None, "--references", "-r", help="Path to a text file with one reference per line."
+    ),
+    output: Optional[Path] = typer.Option(  # noqa: UP007
+        None, "--output", "-o", help="Path to write JSON comparison results."
+    ),
+) -> None:
     """Compare system output to baseline commentaries (Phase 14)."""
-    typer.echo("Not yet implemented — Phase 14")
+    import json as _json
+
+    from f1_commentary.evaluation.evaluator import TraceEvaluator
+    from f1_commentary.evaluation.compare import SystemComparison
+
+    for label, path in [("System", system_traces), ("Baseline", baseline_traces)]:
+        if not path.exists():
+            typer.echo(f"{label} trace file not found: {path}")
+            raise typer.Exit(code=1)
+
+    refs = None
+    if references and references.exists():
+        refs = [line.strip() for line in open(references) if line.strip()]
+
+    sys_eval = TraceEvaluator(system_traces)
+    base_eval = TraceEvaluator(baseline_traces)
+
+    sys_results = sys_eval.evaluate(references=refs)
+    base_results = base_eval.evaluate(references=refs)
+
+    comparison = SystemComparison(sys_results, base_results)
+    summary = comparison.compare()
+
+    typer.echo(_json.dumps(summary, indent=2))
+
+    if output:
+        comparison.export(output)
+        typer.echo(f"\nComparison saved to {output}")
 
 
 # ---------------------------------------------------------------------------
