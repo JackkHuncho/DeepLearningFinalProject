@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68.0", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "f1_commentary"
+version = "0.1.0"
+description = "F1 commentary generation system using deep learning"
+requires-python = ">=3.11"
+dependencies = [
+    "fastf1",
+    "pydantic>=2.0",
+    "pydantic-settings",
+    "typer[all]",
+    "sentence-transformers",
+    "faiss-cpu",
+    "torch",
+    "bert-score",
+    "matplotlib",
+    "pandas",
+    "numpy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+f1-commentary = "f1_commentary.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

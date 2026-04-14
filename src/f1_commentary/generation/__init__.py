@@ -1,0 +1,1 @@
+"""Commentary text generation module."""
