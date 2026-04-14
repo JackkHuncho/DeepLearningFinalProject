@@ -29,11 +29,10 @@ def test_replay_log_help() -> None:
     assert "rebuild-test" in result.output
 
 
-def test_build_index_stub() -> None:
-    """The build-index command should print a Phase 6 stub message."""
+def test_build_index_no_chunks() -> None:
+    """The build-index command should exit with error when no chunks file exists."""
     result = runner.invoke(app, ["build-index"])
-    assert result.exit_code == 0
-    assert "Phase 6" in result.output
+    assert result.exit_code == 1
 
 
 def test_evaluate_run_stub() -> None:

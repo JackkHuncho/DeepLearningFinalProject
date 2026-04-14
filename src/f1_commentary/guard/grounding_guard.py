@@ -380,9 +380,10 @@ class GroundingGuard:
         ctx: str,
         driver_map: dict[str, object],
     ) -> Optional[str]:
-        """Find a recognised driver code in a short context window."""
+        """Find the nearest (rightmost) recognised driver code in context."""
+        last_found: Optional[str] = None
         for m in _DRIVER_CODE_RE.finditer(ctx):
             code = m.group(1)
             if code in driver_map:
-                return code
-        return None
+                last_found = code
+        return last_found
