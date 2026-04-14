@@ -426,9 +426,60 @@ def compare_system_vs_baseline(
 # ---------------------------------------------------------------------------
 
 @app.command()
-def generate_artifacts() -> None:
-    """Generate final deliverable artifacts (Phase 16)."""
-    typer.echo("Not yet implemented — Phase 16")
+def generate_artifacts(
+    comparison: Path = typer.Option(
+        ..., "--comparison", "-c", help="Path to comparison JSON file."
+    ),
+    output: Path = typer.Option(
+        ..., "--output", "-o", help="Output directory for generated artifacts."
+    ),
+    examples: Optional[Path] = typer.Option(  # noqa: UP007
+        None, "--examples", "-e", help="Path to qualitative examples JSON file."
+    ),
+) -> None:
+    """Generate paper-ready artifacts from evaluation comparison (Phase 16)."""
+    import json as _json
+
+    from f1_commentary.artifacts.exporter import ArtifactExporter
+
+    if not comparison.exists():
+        typer.echo(f"Comparison file not found: {comparison}")
+        raise typer.Exit(code=1)
+
+    with open(comparison) as f:
+        comp_data = _json.load(f)
+
+    # Extract latency lists from comparison (use mean as single-point if raw not available)
+    sys_lat_mean = comp_data.get("latency", {}).get("system_mean_ms", 0)
+    base_lat_mean = comp_data.get("latency", {}).get("baseline_mean_ms", 0)
+    system_latencies = comp_data.get("system_latencies", [sys_lat_mean])
+    baseline_latencies = comp_data.get("baseline_latencies", [base_lat_mean])
+
+    # Extract BERTScore lists
+    sys_bert_f1 = comp_data.get("bert_score", {}).get("system_f1", 0)
+    base_bert_f1 = comp_data.get("bert_score", {}).get("baseline_f1", 0)
+    system_bert_scores = comp_data.get("system_bert_scores", [sys_bert_f1])
+    baseline_bert_scores = comp_data.get("baseline_bert_scores", [base_bert_f1])
+
+    # Load qualitative examples if provided
+    qual_examples: list[dict] = []
+    if examples and examples.exists():
+        with open(examples) as f:
+            qual_examples = _json.load(f)
+
+    exporter = ArtifactExporter(output)
+    paths = exporter.generate_all(
+        comparison=comp_data,
+        system_latencies=system_latencies,
+        baseline_latencies=baseline_latencies,
+        system_bert_scores=system_bert_scores,
+        baseline_bert_scores=baseline_bert_scores,
+        examples=qual_examples,
+    )
+
+    typer.echo("Generated artifacts:")
+    for name, path in paths.items():
+        typer.echo(f"  {name}: {path}")
 
 
 if __name__ == "__main__":

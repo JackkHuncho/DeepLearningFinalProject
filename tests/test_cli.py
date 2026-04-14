@@ -35,15 +35,13 @@ def test_build_index_no_chunks() -> None:
     assert result.exit_code == 1
 
 
-def test_evaluate_run_stub() -> None:
-    """The evaluate-run command should print a Phase 14 stub message."""
-    result = runner.invoke(app, ["evaluate-run"])
-    assert result.exit_code == 0
-    assert "Phase 14" in result.output
+def test_evaluate_run_no_traces() -> None:
+    """The evaluate-run command should error when no traces file exists."""
+    result = runner.invoke(app, ["evaluate-run", "--traces", "/nonexistent/traces.jsonl"])
+    assert result.exit_code != 0
 
 
-def test_generate_artifacts_stub() -> None:
-    """The generate-artifacts command should print a Phase 16 stub message."""
-    result = runner.invoke(app, ["generate-artifacts"])
-    assert result.exit_code == 0
-    assert "Phase 16" in result.output
+def test_generate_artifacts_no_comparison() -> None:
+    """The generate-artifacts command should error when no comparison file exists."""
+    result = runner.invoke(app, ["generate-artifacts", "--comparison", "/nonexistent/comparison.json"])
+    assert result.exit_code != 0
