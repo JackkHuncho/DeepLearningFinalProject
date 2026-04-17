@@ -1,0 +1,36 @@
+{
+  "created_at": "2026-04-17T03:08:48.235718Z",
+  "pipeline_version": "0.1.0",
+  "total_examples": 4,
+  "train_examples": 3,
+  "val_examples": 1,
+  "sessions": [
+    {
+      "year": 2024,
+      "grand_prix": "Italian Grand Prix",
+      "session_type": "Race"
+    }
+  ],
+  "event_type_distribution": {
+    "lead_battle": 1,
+    "midfield_battle": 1,
+    "race_control": 2
+  },
+  "alignment_distribution": {
+    "heuristic": 4
+  },
+  "quality_report": {
+    "empty_target_count": 3,
+    "short_target_count": 0,
+    "long_target_count": 0,
+    "duplicate_target_count": 0,
+    "unmatched_count": 3,
+    "low_confidence_count": 4,
+    "total_removed": 3
+  },
+  "split_seed": 42,
+  "val_fraction": 0.2,
+  "transcript_sources": [
+    "sample_commentary.json"
+  ]
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "beat_id": "b405fc0d35f1",
+    "event_type": "lead_battle",
+    "storyline_id": "battle_PER_VER",
+    "involved_drivers": [
+      "VER",
+      "PER"
+    ],
+    "model_variant": "mock",
+    "prompt_text": "[Event: lead_battle | Drivers: VER, PER]\n\n## Observed Facts\n- Current lap: 1\n- Race leader: VER\n- Track status: GREEN FLAG\n- VER: P1, on MEDIUM (lap 1), speed 306 kph\n- PER: P2, on HARD (lap 1), gap ahead 0.6s, speed 307 kph\n- Battle: PER chasing VER (gap 0.60s)\n- Battle: HAM chasing PER (gap 0.90s)\n\n## Derived Inferences\n- (no inferences available)\n\n## Context\n- (none available)\n## Storyline\n- battle_PER_VER (ongoing)\n\n## Task\nGenerate one short, professional-style commentary line grounded in the provided race state. Keep it to one or two sentences.\n",
+    "commentary_text": "Intense racing at the front between VER and PER, the gap barely changing lap after lap.",
+    "retrieved_context_used": false
+  },
+  {
+    "beat_id": "1b1f1943cd34",
+    "event_type": "podium_battle",
+    "storyline_id": "battle_HAM_PER",
+    "involved_drivers": [
+      "PER",
+      "HAM"
+    ],
+    "model_variant": "mock",
+    "prompt_text": "[Event: podium_battle | Drivers: PER, HAM]\n\n## Observed Facts\n- Current lap: 2\n- Race leader: VER\n- Track status: GREEN FLAG\n- PER: P2, on HARD (lap 2), gap ahead 0.7s, speed 308 kph\n- HAM: P3, on SOFT (lap 2), gap ahead 1.0s, speed 309 kph\n- Battle: PER chasing VER (gap 0.70s)\n- Battle: HAM chasing PER (gap 1.00s)\n- Battle: RUS chasing HAM (gap 1.30s)\n\n## Derived Inferences\n- High-intensity battle between PER and VER (intensity 0.82)\n\n## Context\n- (none available)\n## Storyline\n- battle_HAM_PER (ongoing)\n\n## Task\nGenerate one short, professional-style commentary line grounded in the provided race state. Keep it to one or two sentences.\n",
+    "commentary_text": "PER is all over the back of HAM for a podium position.",
+    "retrieved_context_used": false
+  },
+  {
+    "beat_id": "4474bbfb915e",
+    "event_type": "midfield_battle",
+    "storyline_id": "battle_LEC_RUS",
+    "involved_drivers": [
+      "RUS",
+      "LEC"
+    ],
+    "model_variant": "mock",
+    "prompt_text": "[Event: midfield_battle | Drivers: RUS, LEC]\n\n## Observed Facts\n- Current lap: 4\n- Race leader: VER\n- Track status: GREEN FLAG\n- RUS: P4, on MEDIUM (lap 4), gap ahead 1.2s, speed 311 kph\n- LEC: P5, on SOFT (lap 4), gap ahead 1.5s, speed 312 kph\n- Battle: RUS chasing HAM (gap 1.20s)\n- Battle: LEC chasing RUS (gap 1.50s)\n- Battle: SAI chasing LEC (gap 1.80s)\n\n## Derived Inferences\n- RUS pace is improving (trend -0.108)\n- LEC pace is improving (trend -0.107)\n\n## Context\n- (none available)\n## Storyline\n- battle_LEC_RUS (ongoing)\n\n## Task\nGenerate one short, professional-style commentary line grounded in the provided race state. Keep it to one or two sentences.\n",
+    "commentary_text": "RUS is within DRS range of LEC and looking for a way past.",
+    "retrieved_context_used": false
+  },
+  {
+    "beat_id": "065e4613ce64",
+    "event_type": "race_control",
+    "storyline_id": "race_control",
+    "involved_drivers": [],
+    "model_variant": "mock",
+    "prompt_text": "[Event: race_control | Drivers: field]\n\n## Observed Facts\n- Current lap: 9\n- Race leader: VER\n- Track status: SAFETY CAR DEPLOYED\n- Safety car deployed\n\n## Derived Inferences\n- Race control intervention \u2014 track conditions changed\n\n## Context\n- (none available)\n## Storyline\n- race_control (ongoing)\n\n## Task\nGenerate one short, professional-style commentary line grounded in the provided race state. Keep it to one or two sentences.\n",
+    "commentary_text": "Race control intervenes \u2014 the safety car is deployed.",
+    "retrieved_context_used": false
+  },
+  {
+    "beat_id": "eb3feef03d4a",
+    "event_type": "race_control",
+    "storyline_id": "race_control",
+    "involved_drivers": [],
+    "model_variant": "mock",
+    "prompt_text": "[Event: race_control | Drivers: field]\n\n## Observed Facts\n- Current lap: 12\n- Race leader: VER\n- Track status: GREEN FLAG\n\n## Derived Inferences\n- Race control intervention \u2014 track conditions changed\n\n## Context\n- (none available)\n## Storyline\n- race_control (ongoing)\n\n## Task\nGenerate one short, professional-style commentary line grounded in the provided race state. Keep it to one or two sentences.\n",
+    "commentary_text": "Race control intervenes \u2014 the safety car is deployed.",
+    "retrieved_context_used": false
+  }
+]
