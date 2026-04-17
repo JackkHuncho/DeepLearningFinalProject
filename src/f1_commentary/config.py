@@ -26,6 +26,23 @@ class GuardConfig(BaseModel):
     softening_threshold: float = 0.5
 
 
+class TrainingConfig(BaseModel):
+    """Configuration for SFT fine-tuning (Phase 8)."""
+
+    base_model: str = "unsloth/Qwen2.5-7B-bnb-4bit"
+    max_seq_length: int = 2048
+    lora_r: int = 16
+    lora_alpha: int = 32
+    lora_dropout: float = 0.0
+    epochs: int = 3
+    batch_size: int = 1
+    gradient_accumulation_steps: int = 8
+    learning_rate: float = 2e-4
+    warmup_steps: int = 10
+    seed: int = 42
+    output_dir: str = "data/artifacts/qwen25-7b-f1-lora"
+
+
 class EvalConfig(BaseModel):
     """Configuration for evaluation metrics."""
 
@@ -48,4 +65,5 @@ class AppConfig(BaseSettings):
 
     retrieval: RetrievalConfig = RetrievalConfig()
     guard: GuardConfig = GuardConfig()
+    training: TrainingConfig = TrainingConfig()
     evaluation: EvalConfig = EvalConfig()

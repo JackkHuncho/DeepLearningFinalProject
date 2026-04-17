@@ -165,9 +165,9 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 ## Checklist
 
-- [ ] Create/collect 50+ training examples in `data/datasets/sft_train.jsonl`
+- [x] Create/collect 50+ training examples in `data/datasets/sft_train.jsonl` (105 examples, 84/21 train/val split)
 - [ ] Install unsloth + deps on 4060 laptop
-- [ ] Run training (~30-60 min for 3 epochs on 50 examples)
+- [ ] Run training (~30-60 min for 3 epochs on 84 examples)
 - [ ] Verify adapter saves to `data/artifacts/qwen25-7b-f1-lora/final`
 - [ ] Run inference sanity check
 - [ ] Copy adapter back to M1 for integration with commentary generator

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from f1_commentary.config import AppConfig, EvalConfig, GuardConfig, RetrievalConfig
+from f1_commentary.config import AppConfig, EvalConfig, GuardConfig, RetrievalConfig, TrainingConfig
 
 
 def test_default_config_loads() -> None:
@@ -12,6 +12,7 @@ def test_default_config_loads() -> None:
     assert cfg.data_dir == Path("data")
     assert isinstance(cfg.retrieval, RetrievalConfig)
     assert isinstance(cfg.guard, GuardConfig)
+    assert isinstance(cfg.training, TrainingConfig)
     assert isinstance(cfg.evaluation, EvalConfig)
 
 
@@ -49,6 +50,17 @@ def test_nested_env_override(monkeypatch: "pytest.MonkeyPatch") -> None:
     monkeypatch.setenv("F1_RETRIEVAL__USE_FAISS", "false")
     cfg = AppConfig()
     assert cfg.retrieval.use_faiss is False
+
+
+def test_training_defaults() -> None:
+    """TrainingConfig should have sensible defaults."""
+    cfg = TrainingConfig()
+    assert cfg.base_model == "unsloth/Qwen2.5-7B-bnb-4bit"
+    assert cfg.lora_r == 16
+    assert cfg.lora_alpha == 32
+    assert cfg.epochs == 3
+    assert cfg.batch_size == 1
+    assert cfg.learning_rate == 2e-4
 
 
 def test_sample_config_fixture(sample_config: AppConfig) -> None:

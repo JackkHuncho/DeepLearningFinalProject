@@ -422,6 +422,85 @@ def compare_system_vs_baseline(
 
 
 # ---------------------------------------------------------------------------
+# Phase 8 — Training
+# ---------------------------------------------------------------------------
+
+@app.command()
+def train_sft(
+    model: str = typer.Option(
+        "unsloth/Qwen2.5-7B-bnb-4bit", "--model", "-m", help="Base model name or path."
+    ),
+    train_data: Path = typer.Option(
+        "data/datasets/sft_train_split.jsonl", "--train-data", help="Training JSONL file."
+    ),
+    val_data: Optional[Path] = typer.Option(  # noqa: UP007
+        "data/datasets/sft_val_split.jsonl", "--val-data", help="Validation JSONL file."
+    ),
+    output_dir: Path = typer.Option(
+        "data/artifacts/qwen25-7b-f1-lora", "--output-dir", "-o", help="Output directory."
+    ),
+    epochs: int = typer.Option(3, "--epochs", "-e", help="Number of training epochs."),
+    batch_size: int = typer.Option(2, "--batch-size", "-b", help="Per-device batch size."),
+    grad_accum: int = typer.Option(4, "--grad-accum", help="Gradient accumulation steps."),
+    lr: float = typer.Option(2e-4, "--lr", help="Learning rate."),
+    lora_r: int = typer.Option(16, "--lora-r", help="LoRA rank."),
+    lora_alpha: int = typer.Option(32, "--lora-alpha", help="LoRA alpha."),
+    seed: int = typer.Option(42, "--seed", help="Random seed."),
+) -> None:
+    """Fine-tune Qwen2.5-7B with LoRA for F1 commentary (Phase 8)."""
+    from f1_commentary.training.train_sft import train
+
+    if not train_data.exists():
+        typer.echo(f"Training data not found: {train_data}")
+        raise typer.Exit(code=1)
+
+    val = str(val_data) if val_data and val_data.exists() else None
+
+    train(
+        model_name=model,
+        train_data=str(train_data),
+        val_data=val,
+        output_dir=str(output_dir),
+        epochs=epochs,
+        batch_size=batch_size,
+        grad_accum=grad_accum,
+        lr=lr,
+        lora_r=lora_r,
+        lora_alpha=lora_alpha,
+        seed=seed,
+    )
+    typer.echo("Training complete!")
+
+
+@app.command()
+def inference_check(
+    adapter_dir: Path = typer.Option(
+        "data/artifacts/qwen25-7b-f1-lora/final", "--adapter-dir", "-a",
+        help="Path to saved LoRA adapter."
+    ),
+    max_new_tokens: int = typer.Option(200, "--max-tokens", help="Max tokens to generate."),
+    temperature: float = typer.Option(0.7, "--temperature", "-t", help="Sampling temperature."),
+) -> None:
+    """Run inference sanity check with the fine-tuned model (Phase 8)."""
+    from f1_commentary.training.inference import run_inference
+
+    if not adapter_dir.exists():
+        typer.echo(f"Adapter directory not found: {adapter_dir}")
+        typer.echo("Train the model first with the train-sft command.")
+        raise typer.Exit(code=1)
+
+    result = run_inference(
+        adapter_dir=str(adapter_dir),
+        max_new_tokens=max_new_tokens,
+        temperature=temperature,
+    )
+    typer.echo("\n" + "=" * 60)
+    typer.echo("GENERATED COMMENTARY:")
+    typer.echo("=" * 60)
+    typer.echo(result)
+
+
+# ---------------------------------------------------------------------------
 # Phase 16 — Artifacts
 # ---------------------------------------------------------------------------
 
