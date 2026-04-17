@@ -1,0 +1,35 @@
+\begin{thebibliography}{1}
+
+\bibitem{AutoBaseComm}
+Kim, B.J., Choi, Y.S.:
+\newblock Automatic baseball commentary generation using deep learning.
+\newblock In: Proceedings of the 35th Annual ACM Symposium on Applied Computing. (2020)  1056–1065
+
+\bibitem{SCoReS}
+Greg, L., Vadim, B., Elliot, L.:
+\newblock Sports commentary recommendation system (scores): Machine learning for automated narrative.
+\newblock Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment \textbf{8} (2012)  32--37
+
+\bibitem{AutoBaskComm}
+Jung, S., Kim, H., Park, H., Choi, A.:
+\newblock Integrated ai system for real-time sports broadcasting: Player behavior, game event recognition, and generative ai commentary in basketball games.
+\newblock Applied Sciences \textbf{15}(3) (2025)
+
+\bibitem{DPO}
+Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C.D., Finn, C.:
+\newblock Direct preference optimization: Your language model is secretly a reward model (2024)
+
+\bibitem{ouyang2022traininglanguagemodelsfollow}
+Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C.L., Mishkin, P., Zhang, C., Agarwal, S., Slama, K., Ray, A., Schulman, J., Hilton, J., Kelton, F., Miller, L., Simens, M., Askell, A., Welinder, P., Christiano, P., Leike, J., Lowe, R.:
+\newblock Training language models to follow instructions with human feedback (2022)
+
+\bibitem{SFT}
+Pareja, A., Nayak, N.S., Wang, H., Killamsetty, K., Sudalairaj, S., Zhao, W., Han, S., Bhandwaldar, A., Xu, G., Xu, K., Han, L., Inglis, L., Srivastava, A.:
+\newblock Unveiling the secret recipe: A guide for supervised fine-tuning small llms (2024)
+
+\bibitem{AutoBaskData}
+Zhang, B., Gao, J., Yuan, Y.:
+\newblock A descriptive basketball highlight dataset for automatic commentary generation.
+\newblock In: Proceedings of the 32nd ACM International Conference on Multimedia. MM '24, New York, NY, USA, Association for Computing Machinery (2024)  10316–10325
+
+\end{thebibliography}

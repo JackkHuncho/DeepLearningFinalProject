@@ -1,8 +1,5 @@
 \section{Experiments}
 
-Experiments - describe 1-2 experiments or analyses you plan to conduct in order to demonstrate/validate the target contribution(s) of your work. Your description should be detailed enough so that a reader could reproduce it. Your description should include the following for each experiment:
-\begin{itemize}
-    \item Main purpose: 1-3 sentence high level explanation
-    \item Evaluation Metric(s): which ones will you use and why?
-\end{itemize}
-
+\subsection{Latency and User Feasability}
+As our solution is required to run simultaneously with a live race, latency is exceptionally important. What is not fair about this undergoing analysis on this metric is that the hardware in which our system executes can quite obviously boost our performance and lower our latency; this is why we will be aiming for common consumer hardware for testing. The system will run on three different hardware setups, modeling what we believe to be the most common consumer hardware as of 2026. As the tech world has been largely buying mac mini's to run AI solutions, we will be undergoing testing on a 2022 MacBook Pro M1 chip with 16 GB of unified memory, a M4 MacBook Air with 16 GB of unified memory, and additionally a Linux laptop with an Nvidia RTX 4060 to gauge higher-level hardware. We will be aiming for a latency from cognition (when the telemetry packet has been recieved) to final output (when the model has began generation) of less than 1.5 seconds across all devices. \subsection{Our Solution vs. Frontier Models}
+Additionally, we will be conducting A/B testing between our solution and Frontier models, including Google Gemini 3 Fast, Claude Sonnet 4.6, and ChatGPT 5.4. We will be using Evaluation scores from BERTscore, ground truth accuracy for hallucination analysis, and a human survey-based preference for subjective quality. The goal of this evaulation is to capture quantitative data of our open source solution against frontier alternatives. With this, we will be able to see how we can tune our solution to improve matching the expectations of consumers, and possibly see if it makes more sense to use frontier models within our system.
