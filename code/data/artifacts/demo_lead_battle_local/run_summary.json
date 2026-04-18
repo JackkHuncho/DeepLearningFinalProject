@@ -1,0 +1,44 @@
+{
+  "mode": "local",
+  "stopped_at": "complete",
+  "scenario": "lead_battle",
+  "session_label": "demo_replay",
+  "elapsed_ms": 4.82,
+  "counters": {
+    "frames": 20,
+    "snapshots": 20,
+    "candidate_events": 20,
+    "beats_total": 20,
+    "beats_selected": 1,
+    "beats_suppressed": 19,
+    "generations": 1,
+    "finals_emitted": 1,
+    "finals_suppressed": 0,
+    "baselines": 0,
+    "fallbacks_used": 0,
+    "avg_gen_latency_ms": 0.01,
+    "total_gen_latency_ms": 0.01
+  },
+  "trace_paths": {
+    "frames": "data/artifacts/demo_lead_battle_local/replay_frames.jsonl",
+    "snapshots": "data/artifacts/demo_lead_battle_local/snapshots.jsonl",
+    "candidates": "data/artifacts/demo_lead_battle_local/candidate_events.jsonl",
+    "beats": "data/artifacts/demo_lead_battle_local/scheduled_beats.jsonl",
+    "generated": "data/artifacts/demo_lead_battle_local/generated_commentary.jsonl",
+    "finals": "data/artifacts/demo_lead_battle_local/final_commentary.jsonl",
+    "baselines": "data/artifacts/demo_lead_battle_local/baseline_commentary.jsonl",
+    "summary": "data/artifacts/demo_lead_battle_local/run_summary.json"
+  },
+  "flags": {
+    "enable_retrieval": false,
+    "enable_grounding_guard": false,
+    "enable_beat_manager": true,
+    "enable_terminal_output": false,
+    "enable_sse_output": false
+  },
+  "backend": {
+    "local": "mock",
+    "baseline": "mock",
+    "baseline_model": null
+  }
+}
