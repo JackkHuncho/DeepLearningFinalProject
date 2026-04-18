@@ -1,0 +1,44 @@
+{
+  "mode": "baseline",
+  "stopped_at": "complete",
+  "scenario": "all",
+  "session_label": "baseline-sample_replay",
+  "elapsed_ms": 8.2,
+  "counters": {
+    "frames": 20,
+    "snapshots": 20,
+    "candidate_events": 103,
+    "beats_total": 103,
+    "beats_selected": 7,
+    "beats_suppressed": 96,
+    "generations": 6,
+    "finals_emitted": 0,
+    "finals_suppressed": 0,
+    "baselines": 6,
+    "fallbacks_used": 0,
+    "avg_gen_latency_ms": 0.0,
+    "total_gen_latency_ms": 0.02
+  },
+  "trace_paths": {
+    "frames": "data/artifacts/sample_run_baseline/replay_frames.jsonl",
+    "snapshots": "data/artifacts/sample_run_baseline/snapshots.jsonl",
+    "candidates": "data/artifacts/sample_run_baseline/candidate_events.jsonl",
+    "beats": "data/artifacts/sample_run_baseline/scheduled_beats.jsonl",
+    "generated": "data/artifacts/sample_run_baseline/generated_commentary.jsonl",
+    "finals": "data/artifacts/sample_run_baseline/final_commentary.jsonl",
+    "baselines": "data/artifacts/sample_run_baseline/baseline_commentary.jsonl",
+    "summary": "data/artifacts/sample_run_baseline/run_summary.json"
+  },
+  "flags": {
+    "enable_retrieval": false,
+    "enable_grounding_guard": false,
+    "enable_beat_manager": false,
+    "enable_terminal_output": false,
+    "enable_sse_output": false
+  },
+  "backend": {
+    "local": "mock",
+    "baseline": "mock",
+    "baseline_model": null
+  }
+}

@@ -6,6 +6,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Optional
 
 import click
 
@@ -33,6 +34,27 @@ from src.telemetry_to_narrative.generation.commentary_generator import Commentar
 from src.telemetry_to_narrative.schemas.scheduled_beat import ScheduledBeat
 from src.telemetry_to_narrative.beat_manager.beat_manager import BeatManager
 from src.telemetry_to_narrative.beat_manager.output_adapters import TerminalAdapter, SSEAdapter
+from src.telemetry_to_narrative.schemas.baseline_commentary import (
+    BaselineCommentary,
+    BaselineGenerationConfig,
+)
+from src.telemetry_to_narrative.baseline.backends import load_baseline_backend
+from src.telemetry_to_narrative.baseline.baseline_generator import BaselineGenerator
+from src.telemetry_to_narrative.baseline.prompt_builder import build_baseline_prompt
+
+from src.telemetry_to_narrative.pipeline import (
+    PipelineConfig,
+    PipelineMode,
+    PipelineRunner,
+    StopAfter,
+)
+from src.telemetry_to_narrative.pipeline.config import Scenario
+from src.telemetry_to_narrative.pipeline.diagnostics import (
+    check_trace_schemas,
+    load_run_summary,
+    run_doctor,
+    validate_trace_linkage,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -982,6 +1004,622 @@ def stream_final_commentary(
     # Final summary event.
     sys.stdout.write(f"event: done\ndata: {{\"total_emitted\": {emitted}}}\n\n")
     sys.stdout.flush()
+
+
+@cli.command("run-baseline")
+@click.option(
+    "--snapshots",
+    "snapshot_path",
+    type=click.Path(exists=True),
+    required=True,
+    help="Path to a RaceStateSnapshot JSONL file.",
+)
+@click.option(
+    "--beats",
+    "beats_path",
+    type=click.Path(exists=True),
+    required=True,
+    help="Path to a ScheduledBeat JSONL file.",
+)
+@click.option(
+    "--backend",
+    type=click.Choice(["mock", "openai"], case_sensitive=False),
+    default="mock",
+    help="Baseline provider backend.",
+)
+@click.option("--model", "model_name", type=str, default=None, help="Provider model name, e.g. gpt-4o-mini.")
+@click.option("--api-key", type=str, default=None, help="API key (or read from env).")
+@click.option("--base-url", type=str, default=None, help="Optional OpenAI-compatible base URL.")
+@click.option("--max-tokens", type=int, default=128, help="Max new tokens per generation.")
+@click.option("--temperature", type=float, default=0.7, help="Sampling temperature.")
+@click.option("--max-items", type=int, default=20, help="Max beats to process.")
+@click.option(
+    "--output",
+    type=click.Path(),
+    default=None,
+    help="Output path for baseline commentary JSONL.",
+)
+def run_baseline(
+    snapshot_path: str,
+    beats_path: str,
+    backend: str,
+    model_name: str | None,
+    api_key: str | None,
+    base_url: str | None,
+    max_tokens: int,
+    temperature: float,
+    max_items: int,
+    output: str | None,
+):
+    """Run the frontier LLM baseline over scheduled beats."""
+    click.echo("=== Baseline Generation Run ===")
+    click.echo(f"  Snapshots:  {snapshot_path}")
+    click.echo(f"  Beats:      {beats_path}")
+    click.echo(f"  Backend:    {backend}")
+    click.echo(f"  Model:      {model_name or '(default)'}")
+    click.echo(f"  Max items:  {max_items}")
+
+    snapshots = _load_snapshots_from_jsonl(snapshot_path, max_frames=None)
+    beats = _load_beats_from_jsonl(beats_path)
+
+    bl_backend = load_baseline_backend(
+        backend_type=backend,
+        model_name=model_name,
+        api_key=api_key,
+        base_url=base_url,
+    )
+    click.echo(f"  Resolved:   {bl_backend.provider}/{bl_backend.model_name}\n")
+
+    config = BaselineGenerationConfig(
+        max_new_tokens=max_tokens,
+        temperature=temperature,
+        provider=bl_backend.provider,
+        model_name=bl_backend.model_name,
+    )
+    generator = BaselineGenerator(bl_backend, config)
+    results = generator.generate_batch(snapshots, beats, max_items=max_items)
+
+    total_latency = sum(r.latency_ms for r in results)
+    avg_latency = total_latency / len(results) if results else 0.0
+    avg_length = sum(r.output_length for r in results) / len(results) if results else 0.0
+
+    for i, r in enumerate(results, 1):
+        click.echo(f"[{i}/{len(results)}] Beat {r.beat_id}  |  {r.event_type.value}")
+        click.echo(f"  Baseline: {r.commentary_text}")
+        click.echo(f"  Latency: {r.latency_ms:.1f}ms  |  Length: {r.output_length} chars")
+        click.echo("")
+
+    click.echo("--- Summary ---")
+    click.echo(f"  Total baseline:   {len(results)}")
+    click.echo(f"  Avg latency:      {avg_latency:.1f}ms")
+    click.echo(f"  Avg output len:   {avg_length:.0f} chars")
+
+    if output:
+        out_path = Path(output)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w") as fh:
+            for r in results:
+                fh.write(r.model_dump_json() + "\n")
+        click.echo(f"\nWrote {len(results)} baseline outputs to {output}")
+
+
+@cli.command("compare-single-input")
+@click.option(
+    "--snapshot",
+    "snapshot_path",
+    type=click.Path(exists=True),
+    required=True,
+    help="Path to a RaceStateSnapshot JSONL file (first matching frame is used).",
+)
+@click.option(
+    "--beat",
+    "beat_path",
+    type=click.Path(exists=True),
+    required=True,
+    help="Path to a ScheduledBeat JSONL file (first beat is used).",
+)
+@click.option(
+    "--local-backend",
+    type=click.Choice(["mock", "mlx", "llama_cpp"], case_sensitive=False),
+    default="mock",
+    help="Local system backend.",
+)
+@click.option(
+    "--baseline-backend",
+    type=click.Choice(["mock", "openai"], case_sensitive=False),
+    default="mock",
+    help="Baseline provider backend.",
+)
+@click.option("--baseline-model", type=str, default=None, help="Baseline model name.")
+@click.option("--model-path", type=click.Path(), default=None, help="Local model path.")
+@click.option("--adapter-path", type=click.Path(), default=None, help="Local SFT adapter path.")
+def compare_single_input(
+    snapshot_path: str,
+    beat_path: str,
+    local_backend: str,
+    baseline_backend: str,
+    baseline_model: str | None,
+    model_path: str | None,
+    adapter_path: str | None,
+):
+    """Run the local and baseline systems on a single (snapshot, beat) pair.
+
+    Prints prompts and outputs side-by-side for qualitative comparison.
+    Uses the first snapshot matching the first beat's source_frame_id.
+    """
+    snapshots = _load_snapshots_from_jsonl(snapshot_path, max_frames=None)
+    beats = _load_beats_from_jsonl(beat_path)
+
+    if not beats:
+        click.echo("No beats in input file.")
+        return
+
+    beat = beats[0]
+    snap_by_frame = {s.frame_id: s for s in snapshots}
+    snapshot = snap_by_frame.get(beat.source_frame_id)
+    if snapshot is None:
+        click.echo(f"No snapshot found for beat frame {beat.source_frame_id}.")
+        return
+
+    click.echo("=== Single-Input Comparison ===")
+    click.echo(f"  Beat:       {beat.beat_id}  ({beat.event_type.value})")
+    click.echo(f"  Drivers:    {', '.join(beat.involved_drivers) or 'field'}")
+    click.echo(f"  Storyline:  {beat.storyline_id or '(none)'}\n")
+
+    # Local.
+    local_be = load_backend(
+        backend_type=local_backend,
+        model_path=model_path,
+        adapter_path=adapter_path,
+    )
+    local_gen = CommentaryGenerator(local_be)
+    local_out = local_gen.generate(snapshot, beat)
+
+    # Baseline.
+    bl_be = load_baseline_backend(backend_type=baseline_backend, model_name=baseline_model)
+    bl_gen = BaselineGenerator(bl_be)
+    bl_out = bl_gen.generate(snapshot, beat)
+
+    click.echo(f"--- Local prompt ({local_be.model_variant}) ---")
+    click.echo(local_out.prompt_text)
+    click.echo(f"--- Local output ---")
+    click.echo(f"  {local_out.commentary_text}")
+    click.echo(f"  (length={local_out.output_length}, latency={local_out.latency_ms:.1f}ms)\n")
+
+    click.echo(f"--- Baseline prompt ({bl_be.provider}/{bl_be.model_name}) ---")
+    click.echo(bl_out.prompt_text)
+    click.echo(f"--- Baseline output ---")
+    click.echo(f"  {bl_out.commentary_text}")
+    click.echo(f"  (length={bl_out.output_length}, latency={bl_out.latency_ms:.1f}ms)")
+
+
+# ── Phase 15: end-to-end pipeline commands ──────────────────────────────
+
+_STOP_CHOICES = ["none", "replay", "snapshots", "beats", "generation", "final"]
+_SCENARIO_CHOICES = ["all", "lead_battle", "pit_strategy", "race_control"]
+
+
+def _build_frames_source(
+    year: Optional[int],
+    gp: Optional[str],
+    session_type: Optional[str],
+    from_jsonl: Optional[str],
+    max_frames: Optional[int],
+):
+    """Return (frames_list_or_None, fastf1_triplet_or_None)."""
+    if from_jsonl:
+        frames = _load_frames_from_jsonl(from_jsonl, max_frames)
+        return frames, None
+    if year and gp and session_type:
+        return None, (year, gp, session_type)
+    raise click.UsageError(
+        "Provide either --from-jsonl, or --year/--gp/--session for a FastF1 session."
+    )
+
+
+def _print_run_summary(result, config: PipelineConfig) -> None:
+    click.echo("\n--- Run Summary ---")
+    click.echo(f"  Mode:          {config.mode.value}")
+    click.echo(f"  Stopped at:    {result.stopped_at or 'complete'}")
+    click.echo(f"  Scenario:      {config.scenario.value}")
+    counters = result.counters.as_dict()
+    for key in (
+        "frames", "snapshots", "candidate_events",
+        "beats_total", "beats_selected", "beats_suppressed",
+        "generations", "finals_emitted", "finals_suppressed",
+        "baselines", "fallbacks_used",
+        "avg_gen_latency_ms", "total_gen_latency_ms",
+    ):
+        click.echo(f"  {key:<22}{counters[key]}")
+    if result.trace_paths:
+        click.echo("\n  Trace files:")
+        for stage, path in result.trace_paths.items():
+            click.echo(f"    {stage:<12}{path}")
+
+
+# One shared decorator stack — keeps the three commands identical
+# so a user can swap between them without remembering different flags.
+def _pipeline_options(func):
+    """Attach the common pipeline options."""
+    options = [
+        click.option("--from-jsonl", type=click.Path(exists=True), default=None,
+                     help="TelemetryFrame JSONL to replay (bypasses FastF1)."),
+        click.option("--year", type=int, default=None, help="FastF1 season year."),
+        click.option("--gp", type=str, default=None, help="FastF1 Grand Prix."),
+        click.option("--session", "session_type",
+                     type=click.Choice(["FP1", "FP2", "FP3", "Q", "R", "S", "SQ"],
+                                       case_sensitive=False),
+                     default=None, help="FastF1 session type."),
+        click.option("--cache-dir", type=click.Path(), default=None,
+                     help="FastF1 cache dir override."),
+        click.option("--max-frames", type=int, default=None, help="Cap frames processed."),
+        click.option("--max-items", type=int, default=None, help="Cap generations."),
+        click.option("--speed", default="1x", help="Replay speed (1x, 5x, 10x, ...)."),
+        click.option("--realtime/--no-realtime", default=False,
+                     help="Pace replay at wall-clock speed (default: batch)."),
+        click.option("--trace-dir", type=click.Path(), default=None,
+                     help="Directory for per-stage JSONL traces."),
+        click.option("--stop-after",
+                     type=click.Choice(_STOP_CHOICES, case_sensitive=False),
+                     default="none",
+                     help="Stop pipeline after this stage."),
+        click.option("--scenario",
+                     type=click.Choice(_SCENARIO_CHOICES, case_sensitive=False),
+                     default="all",
+                     help="Filter candidates to one scenario."),
+        click.option("--local-backend",
+                     type=click.Choice(["mock", "mlx", "llama_cpp"], case_sensitive=False),
+                     default="mock",
+                     help="Local generator backend (mock=no-deps deterministic stub)."),
+        click.option("--baseline-backend",
+                     type=click.Choice(["mock", "openai"], case_sensitive=False),
+                     default="mock",
+                     help="Baseline provider backend (only used in baseline mode)."),
+        click.option("--baseline-model", type=str, default=None,
+                     help="Baseline model name, e.g. gpt-4o-mini."),
+        click.option("--model-path", type=click.Path(), default=None,
+                     help="Path to a local base model (mlx/llama_cpp backends)."),
+        click.option("--adapter-path", type=click.Path(), default=None,
+                     help="Path to a fine-tuned LoRA adapter (optional)."),
+        click.option("--enable-retrieval/--no-retrieval", default=False,
+                     help="Enable retrieval augmentation (currently a placeholder)."),
+        click.option("--enable-grounding/--no-grounding", default=False,
+                     help="Enable post-generation grounding guard (placeholder)."),
+        click.option("--enable-beat-manager/--no-beat-manager", default=True,
+                     help="Run BeatManager to dedupe / progress storylines."),
+        click.option("--terminal/--no-terminal", default=True,
+                     help="Mirror final commentary to the ANSI terminal adapter."),
+        click.option("--sse/--no-sse", default=False,
+                     help="Also emit final commentary as Server-Sent Events on stdout."),
+        click.option("--include-suppressed", is_flag=True, default=False,
+                     help="Surface suppressed beats in output adapters "
+                          "(traces always include them)."),
+        click.option("--max-tokens", type=int, default=128,
+                     help="Cap output tokens per generation."),
+        click.option("--temperature", type=float, default=0.7,
+                     help="Sampling temperature (0.0 = greedy)."),
+    ]
+    for option in reversed(options):
+        func = option(func)
+    return func
+
+
+def _config_from_options(
+    mode: PipelineMode,
+    *,
+    scenario_name: str,
+    stop_after_name: str,
+    trace_dir: Optional[str],
+    max_frames: Optional[int],
+    max_items: Optional[int],
+    speed: str,
+    realtime: bool,
+    local_backend: str,
+    baseline_backend: str,
+    baseline_model: Optional[str],
+    model_path: Optional[str],
+    adapter_path: Optional[str],
+    enable_retrieval: bool,
+    enable_grounding: bool,
+    enable_beat_manager: bool,
+    terminal: bool,
+    sse: bool,
+    include_suppressed: bool,
+    max_tokens: int,
+    temperature: float,
+    session_label: Optional[str],
+) -> PipelineConfig:
+    return PipelineConfig(
+        mode=mode,
+        stop_after=StopAfter(stop_after_name.lower()),
+        scenario=Scenario(scenario_name.lower()),
+        enable_retrieval=enable_retrieval,
+        enable_grounding_guard=enable_grounding,
+        enable_beat_manager=enable_beat_manager,
+        enable_terminal_output=terminal,
+        enable_sse_output=sse,
+        max_frames=max_frames,
+        replay_speed=_parse_speed(speed),
+        realtime=realtime,
+        max_generation_items=max_items,
+        trace_dir=trace_dir,
+        local_backend=local_backend,
+        local_model_path=model_path,
+        local_adapter_path=adapter_path,
+        baseline_backend=baseline_backend,
+        baseline_model_name=baseline_model,
+        include_suppressed_in_output=include_suppressed,
+        max_new_tokens=max_tokens,
+        temperature=temperature,
+        session_label=session_label,
+    )
+
+
+@cli.command("run-pipeline")
+@_pipeline_options
+def run_pipeline(
+    from_jsonl, year, gp, session_type, cache_dir,
+    max_frames, max_items, speed, realtime,
+    trace_dir, stop_after, scenario,
+    local_backend, baseline_backend, baseline_model,
+    model_path, adapter_path,
+    enable_retrieval, enable_grounding, enable_beat_manager,
+    terminal, sse, include_suppressed,
+    max_tokens, temperature,
+):
+    """Run the full local end-to-end pipeline (replay → final commentary).
+
+    \b
+    Examples:
+      python3 -m src.main run-pipeline --year 2024 --gp Monza --session R \\
+          --max-frames 50 --max-items 20 --trace-dir data/artifacts/run_demo
+      python3 -m src.main run-pipeline --from-jsonl data/logs/sample_replay.jsonl \\
+          --max-frames 20 --trace-dir data/artifacts/replay_demo
+    """
+    frames, fastf1_triplet = _build_frames_source(
+        year, gp, session_type, from_jsonl, max_frames,
+    )
+    label = (
+        f"{year}-{gp}-{session_type}" if fastf1_triplet
+        else Path(from_jsonl).stem if from_jsonl else None
+    )
+    config = _config_from_options(
+        PipelineMode.LOCAL,
+        scenario_name=scenario, stop_after_name=stop_after,
+        trace_dir=trace_dir,
+        max_frames=max_frames, max_items=max_items,
+        speed=speed, realtime=realtime,
+        local_backend=local_backend, baseline_backend=baseline_backend,
+        baseline_model=baseline_model,
+        model_path=model_path, adapter_path=adapter_path,
+        enable_retrieval=enable_retrieval,
+        enable_grounding=enable_grounding,
+        enable_beat_manager=enable_beat_manager,
+        terminal=terminal, sse=sse,
+        include_suppressed=include_suppressed,
+        max_tokens=max_tokens, temperature=temperature,
+        session_label=label,
+    )
+
+    runner = PipelineRunner(config)
+    result = runner.run(frames=frames, fastf1_session=fastf1_triplet, cache_dir=cache_dir)
+    _print_run_summary(result, config)
+
+
+@cli.command("run-baseline-pipeline")
+@_pipeline_options
+def run_baseline_pipeline(
+    from_jsonl, year, gp, session_type, cache_dir,
+    max_frames, max_items, speed, realtime,
+    trace_dir, stop_after, scenario,
+    local_backend, baseline_backend, baseline_model,
+    model_path, adapter_path,
+    enable_retrieval, enable_grounding, enable_beat_manager,
+    terminal, sse, include_suppressed,
+    max_tokens, temperature,
+):
+    """Run the frontier-baseline end-to-end pipeline (BeatManager skipped).
+
+    \b
+    Example:
+      python3 -m src.main run-baseline-pipeline \\
+          --from-jsonl data/logs/sample_replay.jsonl --max-frames 20 \\
+          --baseline-backend openai --baseline-model gpt-4o-mini \\
+          --trace-dir data/artifacts/baseline_demo
+    """
+    frames, fastf1_triplet = _build_frames_source(
+        year, gp, session_type, from_jsonl, max_frames,
+    )
+    label = (
+        f"baseline-{year}-{gp}-{session_type}" if fastf1_triplet
+        else f"baseline-{Path(from_jsonl).stem}" if from_jsonl else None
+    )
+    config = _config_from_options(
+        PipelineMode.BASELINE,
+        scenario_name=scenario, stop_after_name=stop_after,
+        trace_dir=trace_dir,
+        max_frames=max_frames, max_items=max_items,
+        speed=speed, realtime=realtime,
+        local_backend=local_backend, baseline_backend=baseline_backend,
+        baseline_model=baseline_model,
+        model_path=model_path, adapter_path=adapter_path,
+        enable_retrieval=enable_retrieval,
+        enable_grounding=enable_grounding,
+        enable_beat_manager=False,
+        terminal=terminal, sse=sse,
+        include_suppressed=include_suppressed,
+        max_tokens=max_tokens, temperature=temperature,
+        session_label=label,
+    )
+
+    runner = PipelineRunner(config)
+    result = runner.run(frames=frames, fastf1_session=fastf1_triplet, cache_dir=cache_dir)
+
+    # Baseline has no finals; print the baseline commentary directly.
+    if result.baselines:
+        click.echo(f"\n--- Baseline Commentary ({len(result.baselines)}) ---")
+        for i, r in enumerate(result.baselines, 1):
+            click.echo(f"[{i}/{len(result.baselines)}] Beat {r.beat_id} [{r.event_type.value}] "
+                       f"{r.provider}/{r.model_name} {r.latency_ms:.1f}ms")
+            click.echo(f"  {r.commentary_text}")
+    _print_run_summary(result, config)
+
+
+@cli.command("run-scenario")
+@click.option("--type", "scenario_type",
+              type=click.Choice(["lead_battle", "pit_strategy", "race_control"],
+                                case_sensitive=False),
+              required=True, help="Scenario to demo.")
+@_pipeline_options
+def run_scenario(
+    scenario_type,
+    from_jsonl, year, gp, session_type, cache_dir,
+    max_frames, max_items, speed, realtime,
+    trace_dir, stop_after, scenario,  # scenario option overridden by scenario_type
+    local_backend, baseline_backend, baseline_model,
+    model_path, adapter_path,
+    enable_retrieval, enable_grounding, enable_beat_manager,
+    terminal, sse, include_suppressed,
+    max_tokens, temperature,
+):
+    """Run a scenario-focused demo (filters candidates to one event type).
+
+    \b
+    Example:
+      python3 -m src.main run-scenario --type lead_battle \\
+          --from-jsonl data/logs/sample_replay.jsonl --max-frames 50
+    """
+    frames, fastf1_triplet = _build_frames_source(
+        year, gp, session_type, from_jsonl, max_frames,
+    )
+    label = f"scenario-{scenario_type}"
+    config = _config_from_options(
+        PipelineMode.LOCAL,
+        scenario_name=scenario_type,  # override CLI --scenario
+        stop_after_name=stop_after,
+        trace_dir=trace_dir,
+        max_frames=max_frames, max_items=max_items,
+        speed=speed, realtime=realtime,
+        local_backend=local_backend, baseline_backend=baseline_backend,
+        baseline_model=baseline_model,
+        model_path=model_path, adapter_path=adapter_path,
+        enable_retrieval=enable_retrieval,
+        enable_grounding=enable_grounding,
+        enable_beat_manager=enable_beat_manager,
+        terminal=terminal, sse=sse,
+        include_suppressed=include_suppressed,
+        max_tokens=max_tokens, temperature=temperature,
+        session_label=label,
+    )
+
+    runner = PipelineRunner(config)
+    result = runner.run(frames=frames, fastf1_session=fastf1_triplet, cache_dir=cache_dir)
+    _print_run_summary(result, config)
+
+
+# ── Phase 17: diagnostics ───────────────────────────────────────────────
+
+
+@cli.command("doctor")
+@click.option(
+    "--repo-root",
+    type=click.Path(exists=True, file_okay=False),
+    default=".",
+    help="Project root to inspect (defaults to current directory).",
+)
+@click.option(
+    "--json", "as_json", is_flag=True, default=False,
+    help="Emit the report as JSON instead of a human summary.",
+)
+def doctor(repo_root: str, as_json: bool):
+    """Sanity-check folders, optional deps, backends, and sample artifacts."""
+    report = run_doctor(repo_root)
+    if as_json:
+        click.echo(json.dumps(report, indent=2))
+        sys.exit(0 if report["ok"] else 1)
+
+    click.echo(f"=== doctor: {report['repo_root']} ===\n")
+
+    click.echo("Folders:")
+    for rel, info in report["folders"].items():
+        mark = "OK" if info["exists"] else "MISSING"
+        click.echo(f"  [{mark:<7}] {rel}")
+
+    click.echo("\nOptional dependencies:")
+    for dep, status in report["dependencies"].items():
+        click.echo(f"  [{status:<10}] {dep}")
+
+    click.echo("\nBackends:")
+    for name, status in report["backends"].items():
+        click.echo(f"  [{status:<28}] {name}")
+
+    click.echo("\nSample artifacts:")
+    for rel, status in report["samples"].items():
+        click.echo(f"  [{status:<7}] {rel}")
+
+    click.echo(f"\nOverall: {'OK' if report['ok'] else 'ISSUES FOUND'}")
+    sys.exit(0 if report["ok"] else 1)
+
+
+@cli.command("validate-trace")
+@click.option(
+    "--trace-dir",
+    type=click.Path(exists=True, file_okay=False),
+    required=True,
+    help="Directory containing pipeline JSONL traces and run_summary.json.",
+)
+@click.option(
+    "--check-schemas/--skip-schemas",
+    default=True,
+    help="Validate every JSONL row against its Pydantic schema.",
+)
+@click.option(
+    "--json", "as_json", is_flag=True, default=False,
+    help="Emit the report as JSON.",
+)
+def validate_trace(trace_dir: str, check_schemas: bool, as_json: bool):
+    """Verify ID linkage and schema compatibility across a trace directory."""
+    linkage = validate_trace_linkage(trace_dir)
+    schemas = check_trace_schemas(trace_dir) if check_schemas else None
+    summary = load_run_summary(trace_dir)
+    overall_ok = linkage["ok"] and (schemas is None or schemas["ok"])
+
+    if as_json:
+        click.echo(json.dumps(
+            {"ok": overall_ok, "linkage": linkage, "schemas": schemas,
+             "summary_present": summary is not None},
+            indent=2,
+        ))
+        sys.exit(0 if overall_ok else 1)
+
+    click.echo(f"=== validate-trace: {trace_dir} ===\n")
+    click.echo("Counts:")
+    for stage, n in linkage["counts"].items():
+        click.echo(f"  {stage:<12} {n}")
+
+    click.echo("\nID linkage:")
+    if linkage["ok"]:
+        click.echo("  OK — all referenced IDs resolve.")
+    else:
+        for err in linkage["errors"]:
+            click.echo(f"  FAIL — {err}")
+
+    if schemas is not None:
+        click.echo("\nSchema compatibility:")
+        for fname, info in schemas["files"].items():
+            if "skipped" in info:
+                click.echo(f"  [skip ] {fname}  ({info['skipped']})")
+                continue
+            mark = "OK" if not info["errors"] else "FAIL"
+            click.echo(f"  [{mark:<5}] {fname}  ({info['valid']}/{info['total']})")
+            for e in info["errors"][:3]:
+                click.echo(f"          line {e['line']}: {e['msg'][:120]}")
+
+    click.echo(
+        f"\nrun_summary.json: {'present' if summary else 'missing'}"
+    )
+    click.echo(f"Overall: {'OK' if overall_ok else 'ISSUES FOUND'}")
+    sys.exit(0 if overall_ok else 1)
 
 
 if __name__ == "__main__":
