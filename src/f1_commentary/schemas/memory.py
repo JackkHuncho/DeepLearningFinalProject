@@ -4,7 +4,7 @@ Defines the document and chunk models stored in the vector index,
 including metadata for provenance tracking.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 import uuid
@@ -24,4 +24,4 @@ class MemoryChunk(BaseModel):
     involved_drivers: list[str] = Field(default_factory=list)
     text: str  # The actual content
     metadata: dict = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(tz=timezone.utc))

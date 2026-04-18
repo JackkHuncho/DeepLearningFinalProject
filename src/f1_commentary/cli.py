@@ -364,7 +364,8 @@ def evaluate_run(
 
     refs = None
     if references and references.exists():
-        refs = [line.strip() for line in open(references) if line.strip()]
+        with open(references) as f:
+            refs = [line.strip() for line in f if line.strip()]
 
     results = evaluator.evaluate(references=refs)
 
@@ -403,7 +404,8 @@ def compare_system_vs_baseline(
 
     refs = None
     if references and references.exists():
-        refs = [line.strip() for line in open(references) if line.strip()]
+        with open(references) as f:
+            refs = [line.strip() for line in f if line.strip()]
 
     sys_eval = TraceEvaluator(system_traces)
     base_eval = TraceEvaluator(baseline_traces)

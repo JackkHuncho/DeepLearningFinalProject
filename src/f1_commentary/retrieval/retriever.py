@@ -5,7 +5,7 @@ Tier 2 (semantic / embedding search) is gated by event confidence.
 """
 
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Callable, Protocol
 
 import numpy as np
@@ -94,7 +94,7 @@ class Retriever:
         self, event: CandidateEvent, state: RaceStateSnapshot
     ) -> RetrievalResult:
         """Gated retrieval: Tier 1 always, Tier 2 only if confidence >= threshold."""
-        now = datetime.utcnow()
+        now = datetime.now(tz=timezone.utc)
 
         # Tier 1 — always
         t1_start = time.perf_counter()

@@ -47,7 +47,7 @@ When triggered, the system retrieves relevant historical or strategic context, s
 
 \subsection{Commentary Generation Model}
 
-The final commentary is generated using a fine tuned language model. We employ a Gemma based model adapted through supervised fine tuning with efficient parameter adaptation techniques.
+The final commentary is generated using a fine tuned language model. We employ the Qwen2.5-7B base model adapted through supervised fine tuning with Low-Rank Adaptation (LoRA) for efficient parameter adaptation.
 
 The fine tuning process follows the supervised fine tuning paradigm, where the model is trained on paired input output examples consisting of structured race state representations and corresponding professional style commentary. During training, the model learns to map structured telemetry derived features and event descriptors to coherent natural language outputs by minimizing the cross entropy loss between predicted and reference tokens. This approach enables the model to align its generation behavior with domain specific linguistic patterns and commentary style \cite{SFT}.
 

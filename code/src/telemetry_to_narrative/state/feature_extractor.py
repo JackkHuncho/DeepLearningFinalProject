@@ -273,6 +273,8 @@ class FeatureExtractor:
             return None
         if gap_sec <= 0:
             return 0.0
+        if abs(pace_delta) < 1e-6:
+            return 999.0
         raw = gap_sec / abs(pace_delta)
         return _clamp(raw, 0.0, 999.0)
 

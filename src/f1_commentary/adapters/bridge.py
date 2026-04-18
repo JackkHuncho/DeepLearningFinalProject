@@ -17,12 +17,11 @@ The odd-phase package resolves its own internal imports via
 
 from __future__ import annotations
 
-import os
 import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, Optional
 
 # ---------------------------------------------------------------------------
 # Ensure ``code/`` is importable so that the odd-phase schemas work.
@@ -78,6 +77,9 @@ from src.telemetry_to_narrative.schemas.final_commentary import (
     FinalCommentary as OddFinalCommentary,
     ConfidenceBand as OddConfidenceBand,
     RaceStateSummary as OddRaceStateSummary,
+)
+from src.telemetry_to_narrative.schemas.baseline_commentary import (
+    BaselineCommentary as OddBaselineCommentary,
 )
 
 # =========================================================================
@@ -435,4 +437,34 @@ def odd_final_to_even(odd_final: OddFinalCommentary) -> EvenFinalCommentary:
         replay_lag_ms=odd_final.replay_lag_seconds * 1000.0,
         race_state_summary=race_summary_dict,
         involved_drivers=odd_final.involved_drivers,
+    )
+
+
+# =========================================================================
+# 8. Phase 13: BaselineCommentary adapter (odd -> even GeneratedCommentary)
+# =========================================================================
+
+def odd_baseline_to_even(odd_baseline: OddBaselineCommentary) -> EvenGeneratedCommentary:
+    """Convert an odd-phase ``BaselineCommentary`` to even-phase ``GeneratedCommentary``.
+
+    Baseline outputs share enough structure with generated commentary
+    to be mapped into the same even-phase type for unified evaluation.
+    """
+    # Map odd EventType to even CandidateEventType
+    odd_type_name = (
+        odd_baseline.event_type.value
+        if isinstance(odd_baseline.event_type, OddEventType)
+        else str(odd_baseline.event_type)
+    )
+    even_type = ODD_TO_EVEN_EVENT_TYPE.get(odd_type_name, CandidateEventType.TELEMETRY_CHANGE)
+
+    return EvenGeneratedCommentary(
+        event_id=_new_id(),
+        timestamp=odd_baseline.timestamp,
+        source_beat_id=odd_baseline.beat_id,
+        candidate_type=even_type,
+        generated_text=odd_baseline.commentary_text or odd_baseline.raw_output_text,
+        model_name=odd_baseline.model_name,
+        latency_ms=odd_baseline.latency_ms,
+        involved_drivers=odd_baseline.involved_drivers,
     )

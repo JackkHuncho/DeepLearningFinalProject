@@ -2,7 +2,7 @@
 
 import json
 import tempfile
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -75,7 +75,7 @@ def _make_chunks(n: int, drivers: list[list[str]] | None = None) -> list[MemoryC
 
 def _make_state() -> RaceStateSnapshot:
     return RaceStateSnapshot(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(tz=timezone.utc),
         event_type=EventType.RACE_STATE_UPDATE,
         session_key="2024_Monza_R",
         lap=10,
@@ -92,7 +92,7 @@ def _make_candidate(
     explanation: str = "battle for position",
 ) -> CandidateEvent:
     return CandidateEvent(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(tz=timezone.utc),
         event_type=EventType.CANDIDATE_EVENT,
         candidate_type=CandidateEventType.OVERTAKE_OPPORTUNITY,
         involved_drivers=drivers or ["HAM", "VER"],

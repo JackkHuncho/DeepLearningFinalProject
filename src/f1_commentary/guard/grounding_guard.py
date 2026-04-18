@@ -378,7 +378,7 @@ class GroundingGuard:
     @staticmethod
     def _find_driver_in_context(
         ctx: str,
-        driver_map: dict[str, object],
+        driver_map: dict,
     ) -> Optional[str]:
         """Find the nearest (rightmost) recognised driver code in context."""
         last_found: Optional[str] = None
