@@ -356,6 +356,7 @@ class EditorialScheduler:
         candidates: list[CandidateEvent],
         frame_id: int,
         safety_car_active: bool = False,
+        current_lap: Optional[int] = None,
     ) -> list[ScheduledBeat]:
         """Score, rank, and filter a batch of candidate events.
 
@@ -368,7 +369,7 @@ class EditorialScheduler:
         # Phase 1: score every candidate.
         scored: list[tuple[float, ScheduledBeat]] = []
         for event in candidates:
-            beat = self._score_event(event, frame_id, safety_car_active)
+            beat = self._score_event(event, frame_id, safety_car_active, current_lap)
             scored.append((beat.priority_score, beat))
 
         # Phase 2: sort by priority (descending).
@@ -415,6 +416,7 @@ class EditorialScheduler:
         event: CandidateEvent,
         frame_id: int,
         safety_car_active: bool,
+        current_lap: Optional[int] = None,
     ) -> ScheduledBeat:
         """Score a single candidate and return a ScheduledBeat."""
         storyline_id = _derive_storyline_id(event)
@@ -424,7 +426,7 @@ class EditorialScheduler:
         ctx = score_contextual_importance(event, self.config)
         urg = score_urgency(event)
         phase = score_race_phase(
-            event.position_of_interest,
+            current_lap,
             self._total_laps,
             safety_car_active,
         )

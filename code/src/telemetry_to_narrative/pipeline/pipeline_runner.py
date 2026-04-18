@@ -266,7 +266,12 @@ class PipelineRunner:
         counters: PipelineCounters,
     ) -> tuple[list[ScheduledBeat], list]:
         scheduler = EditorialScheduler()
-        scheduler.set_total_laps(max(1, len(snapshots)))
+        # Estimate total laps from the last snapshot's max lap number
+        max_lap = max(
+            (d.lap_number or 0 for snap in snapshots for d in snap.drivers.values()),
+            default=57,
+        )
+        scheduler.set_total_laps(max(1, max_lap))
 
         all_candidates = []
         all_beats: list[ScheduledBeat] = []
@@ -280,9 +285,15 @@ class PipelineRunner:
                 tw.write("candidates", c)
             all_candidates.extend(candidates)
 
+            # Extract current lap from snapshot drivers
+            current_lap = max(
+                (d.lap_number for d in snap.drivers.values() if d.lap_number is not None),
+                default=None,
+            )
             safety_car = bool(snap.global_state.safety_car)
             beats = scheduler.schedule(
                 candidates, frame_id=snap.frame_id, safety_car_active=safety_car,
+                current_lap=current_lap,
             )
             for b in beats:
                 tw.write("beats", b)

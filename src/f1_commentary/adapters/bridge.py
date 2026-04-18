@@ -199,7 +199,7 @@ def odd_telemetry_to_even(odd_frame: OddTelemetryFrame) -> EvenTelemetryFrame:
         event_id=_new_id(),
         timestamp=odd_frame.timestamp,
         session_key=_session_key_from_info(odd_frame.session_info),
-        lap=odd_frame.drivers[0].lap_number if odd_frame.drivers else 0,
+        lap=(odd_frame.drivers[0].lap_number or 0) if odd_frame.drivers else 0,
         drivers=drivers,
         flag_status=gs.track_status,
         weather=_weather_from_global(gs),
@@ -450,21 +450,13 @@ def odd_baseline_to_even(odd_baseline: OddBaselineCommentary) -> EvenGeneratedCo
     Baseline outputs share enough structure with generated commentary
     to be mapped into the same even-phase type for unified evaluation.
     """
-    # Map odd EventType to even CandidateEventType
-    odd_type_name = (
-        odd_baseline.event_type.value
-        if isinstance(odd_baseline.event_type, OddEventType)
-        else str(odd_baseline.event_type)
-    )
-    even_type = ODD_TO_EVEN_EVENT_TYPE.get(odd_type_name, CandidateEventType.TELEMETRY_CHANGE)
-
     return EvenGeneratedCommentary(
         event_id=_new_id(),
         timestamp=odd_baseline.timestamp,
         source_beat_id=odd_baseline.beat_id,
-        candidate_type=even_type,
+        prompt_text=odd_baseline.prompt_text,
         generated_text=odd_baseline.commentary_text or odd_baseline.raw_output_text,
-        model_name=odd_baseline.model_name,
-        latency_ms=odd_baseline.latency_ms,
+        model_variant=odd_baseline.model_name,
+        generation_latency_ms=odd_baseline.latency_ms,
         involved_drivers=odd_baseline.involved_drivers,
     )

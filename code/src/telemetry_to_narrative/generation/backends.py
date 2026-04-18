@@ -216,10 +216,12 @@ class LlamaCppBackend(BaseGeneratorBackend):
     def __init__(
         self,
         model_path: str,
+        adapter_path: Optional[str] = None,
         n_ctx: int = 2048,
         n_gpu_layers: int = -1,
     ) -> None:
         self._model_path = model_path
+        self._adapter_path = adapter_path
         self._n_ctx = n_ctx
         self._n_gpu_layers = n_gpu_layers
         self._llm = None
@@ -229,12 +231,16 @@ class LlamaCppBackend(BaseGeneratorBackend):
             from llama_cpp import Llama  # type: ignore
 
             logger.info("Loading llama.cpp model from %s", self._model_path)
-            self._llm = Llama(
+            kwargs: dict = dict(
                 model_path=self._model_path,
                 n_ctx=self._n_ctx,
                 n_gpu_layers=self._n_gpu_layers,
                 verbose=False,
             )
+            if self._adapter_path:
+                logger.info("Applying LoRA adapter from %s", self._adapter_path)
+                kwargs["lora_path"] = self._adapter_path
+            self._llm = Llama(**kwargs)
         except ImportError:
             raise RuntimeError(
                 "llama.cpp backend requires llama-cpp-python. "

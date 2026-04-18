@@ -78,7 +78,7 @@ def load_backend(
         if model_path is None:
             logger.warning("No model_path for llama.cpp backend — falling back to mock.")
             return MockGeneratorBackend(seed=mock_seed)
-        backend = LlamaCppBackend(model_path)
+        backend = LlamaCppBackend(model_path, adapter_path=resolved_adapter)
         if not backend.is_available:
             logger.warning("llama-cpp-python not installed — falling back to mock backend.")
             return MockGeneratorBackend(seed=mock_seed)
