@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Linting
+.ruff_cache/
+
+# Model weights
+*.pt
+*.bin
+*.safetensors
+
+# Data directories (large / generated)
+data/raw/
+data/processed/
+data/embeddings/
+data/artifacts/
+data/logs/*.jsonl
+data/logs/traces/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific
+CLAUDE.md
+prompt.md

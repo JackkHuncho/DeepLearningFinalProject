@@ -1,0 +1,74 @@
+{
+  "segments": [
+    {
+      "timestamp": "2024-01-01T14:00:05",
+      "text": "And lights out and away we go! Verstappen gets a fantastic start from pole position, Hamilton right behind him.",
+      "speaker": "Crofty",
+      "drivers_mentioned": ["VER", "HAM"],
+      "event_type_hint": "lead_battle"
+    },
+    {
+      "timestamp": "2024-01-01T14:00:15",
+      "text": "Norris has made up a position at the start, he's now up to P3 ahead of Leclerc into turn one.",
+      "speaker": "Crofty",
+      "drivers_mentioned": ["NOR", "LEC"],
+      "event_type_hint": "overtake"
+    },
+    {
+      "timestamp": "2024-01-01T14:00:30",
+      "text": "The gap between Verstappen and Hamilton is already 0.8 seconds after the opening lap. Max is pulling away.",
+      "speaker": "Brundle",
+      "drivers_mentioned": ["VER", "HAM"],
+      "event_type_hint": "lead_battle"
+    },
+    {
+      "timestamp": "2024-01-01T14:01:00",
+      "text": "Sainz has pitted from P5! An early stop, he's gone from medium tires to the hard compound.",
+      "speaker": "Crofty",
+      "drivers_mentioned": ["SAI"],
+      "event_type_hint": "pit_strategy"
+    },
+    {
+      "timestamp": "2024-01-01T14:01:30",
+      "text": "Safety car deployed! There's been an incident at turn 4. Looks like Perez has gone off into the barrier.",
+      "speaker": "Crofty",
+      "drivers_mentioned": ["PER"],
+      "event_type_hint": "race_control"
+    },
+    {
+      "timestamp": "2024-01-01T14:02:00",
+      "text": "Under the safety car now, the field bunches up. Hamilton is right on the gearbox of Verstappen.",
+      "speaker": "Brundle",
+      "drivers_mentioned": ["HAM", "VER"],
+      "event_type_hint": "lead_battle"
+    },
+    {
+      "timestamp": "2024-01-01T14:02:30",
+      "text": "Green flag! Racing resumes and Verstappen gets a good restart. Hamilton has to defend from Norris behind.",
+      "speaker": "Crofty",
+      "drivers_mentioned": ["VER", "HAM", "NOR"],
+      "event_type_hint": "race_control"
+    },
+    {
+      "timestamp": "2024-01-01T14:03:00",
+      "text": "Norris has got alongside Hamilton into turn 3! Side by side, fantastic racing. Norris takes P2!",
+      "speaker": "Crofty",
+      "drivers_mentioned": ["NOR", "HAM"],
+      "event_type_hint": "overtake"
+    },
+    {
+      "timestamp": "2024-01-01T14:03:30",
+      "text": "Leclerc is now battling with Alonso for P5. The gap is under a second, DRS is enabled.",
+      "speaker": "Brundle",
+      "drivers_mentioned": ["LEC", "ALO"],
+      "event_type_hint": "midfield_battle"
+    },
+    {
+      "timestamp": "2024-01-01T14:04:00",
+      "text": "Hamilton pits! He's come in for hard tires. A slow stop, 3.2 seconds. He'll rejoin behind Alonso.",
+      "speaker": "Crofty",
+      "drivers_mentioned": ["HAM", "ALO"],
+      "event_type_hint": "pit_strategy"
+    }
+  ]
+}
